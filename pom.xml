@@ -10,7 +10,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<guice.version>4.0-beta5</guice.version>
+		<guice.version>4.0</guice.version>
 		<guava.version>18.0</guava.version>
 	</properties>
 
@@ -94,19 +94,16 @@
 	<build>
 		<pluginManagement>
 			<plugins>
+
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.2</version>
+					<version>3.3</version>
 					<configuration>
 						<source>1.7</source>
 						<target>1.7</target>
 					</configuration>
 				</plugin>
-				<plugin>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-maven-plugin</artifactId>
-					<version>9.2.3.v20140905</version>
-				</plugin>
+
 				<plugin>
 					<groupId>net.ltgt.gwt.maven</groupId>
 					<artifactId>gwt-maven-plugin</artifactId>
@@ -117,6 +114,7 @@
 						<failOnError>true</failOnError>
 					</configuration>
 				</plugin>
+
 				<plugin>
 					<artifactId>maven-source-plugin</artifactId>
 					<version>2.4</version>
@@ -130,20 +128,12 @@
 						</execution>
 					</executions>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.tomcat.maven</groupId>
-					<artifactId>tomcat7-maven-plugin</artifactId>
-					<version>2.2</version>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>exec-maven-plugin</artifactId>
-					<version>1.3.2</version>
-				</plugin>
+
 			</plugins>
 		</pluginManagement>
 
 		<plugins>
+
 			<plugin>
 				<groupId>net.ltgt.gwt.maven</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
