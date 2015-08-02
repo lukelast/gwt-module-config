@@ -152,6 +152,29 @@
 					<moduleShortName>gwt</moduleShortName>
 				</configuration>
 			</plugin>
+
+			<!-- Copy the GWT module directory from the target to the project root. -->
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<delete dir="${project.basedir}/gwt" />
+								<copy todir="${project.basedir}/gwt">
+									<fileset dir="${project.build.directory}/${project.build.finalName}/gwt" />
+								</copy>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>
