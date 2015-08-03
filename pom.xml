@@ -104,6 +104,8 @@
 					</configuration>
 				</plugin>
 
+
+
 				<plugin>
 					<groupId>net.ltgt.gwt.maven</groupId>
 					<artifactId>gwt-maven-plugin</artifactId>
@@ -140,6 +142,8 @@
 				<configuration>
 					<moduleName>net.ghue.gwt.modconfig.App</moduleName>
 					<moduleShortName>gwt</moduleShortName>
+					<!-- This is where it writes the gwt.nocache.js file for super DEV mode. -->
+					<launcherDir>${project.basedir}</launcherDir>
 				</configuration>
 			</plugin>
 
@@ -163,6 +167,22 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<!-- Needed for super DEV mode. -->
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>9.2.3.v20140905</version>
+				<configuration>
+					<webAppSourceDirectory>${project.basedir}</webAppSourceDirectory>
+					<httpConnector>
+						<port>8080</port>
+					</httpConnector>
+					<stopKey>jetty</stopKey>
+					<stopPort>29383</stopPort>
+					<stopWait>5</stopWait>
+				</configuration>
 			</plugin>
 
 		</plugins>

@@ -1,15 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module>
-  <inherits name="com.google.common.base.Base" />
-  <inherits name="com.google.gwt.activity.Activity" />
-  <inherits name="com.google.gwt.inject.Inject" />
-  <inherits name="com.google.gwt.user.User" />
+	<inherits name="com.google.common.base.Base" />
+	<inherits name="com.google.gwt.activity.Activity" />
+	<inherits name="com.google.gwt.inject.Inject" />
+	<inherits name="com.google.gwt.user.User" />
+	<inherits name="com.google.gwt.xml.XML" />
 
-  <source path="" />
+	<source path="" />
 
-  <entry-point class="net.ghue.gwt.modconfig.App" />
+	<entry-point class="net.ghue.gwt.modconfig.App" />
 
-  <!-- Only support recent browsers -->
-  <set-property name="user.agent" value="ie10,gecko1_8,safari" />
-  
+	<!-- Only support recent browsers -->
+	<set-property name="user.agent" value="ie10,gecko1_8,safari" />
+
+
+	<!-- Allow client side logging. -->
+	<inherits name="com.google.gwt.logging.Logging" />
+
+	<set-property name="gwt.logging.enabled" value="TRUE" />
+
+	<!-- ALL, FINEST, FINER, FINE, CONFIG, INFO, WARNING, SEVERE -->
+	<set-property name="gwt.logging.logLevel" value="ALL" />
+
+	<!-- Displays log messages in the browser's JS console. -->
+	<set-property name="gwt.logging.consoleHandler" value="ENABLED" />
+
+	<!-- Logs to the Eclipse console (standard out). -->
+	<set-property name="gwt.logging.systemHandler" value="ENABLED" />
+
 </module>
