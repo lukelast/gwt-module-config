@@ -3,13 +3,17 @@ package net.ghue.gwt.modconfig;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.gwt.xml.client.Comment;
 import com.google.gwt.xml.client.DOMException;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
+import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
-final class XmlConverter {
+import net.ghue.gwt.modconfig.data.GwtModuleModel;
+
+public final class XmlConverter {
 	private static final String ATTR_ENTRY_POINT_CLASS = "class";
 	private static final String ATTR_RENAME_TO = "rename-to";
 	private static final String EL_ENTRY_POINT = "entry-point";
@@ -22,13 +26,23 @@ final class XmlConverter {
 
 			// parse the XML document into a DOM
 			Document doc = XMLParser.parse(xml);
+			doc.normalize();
 
-			mod.setModuleName(doc.getDocumentElement().getAttribute(ATTR_RENAME_TO));
+			mod.getModuleName().setValue(doc.getDocumentElement().getAttribute(ATTR_RENAME_TO));
 
 			NodeList entryPoints = doc.getElementsByTagName(EL_ENTRY_POINT);
 			if (entryPoints.getLength() == 1) {
-				mod.setEntryPoint(
-						entryPoints.item(0).getAttributes().getNamedItem(ATTR_ENTRY_POINT_CLASS).getNodeValue());
+				Node entryPoint = entryPoints.item(0);
+
+				mod.getEntryPoint()
+						.setValue(entryPoint.getAttributes().getNamedItem(ATTR_ENTRY_POINT_CLASS).getNodeValue());
+				Node comment = entryPoint.getPreviousSibling();
+				while (comment.getNodeType() == Node.TEXT_NODE) {
+					comment = comment.getPreviousSibling();
+				}
+				if (comment.getNodeType() == Node.COMMENT_NODE) {
+					mod.getEntryPoint().setComment(comment.getNodeValue());
+				}
 			}
 
 		} catch (DOMException ex) {
@@ -43,15 +57,25 @@ final class XmlConverter {
 		Element module = doc.createElement(EL_MODULE);
 		doc.appendChild(module);
 
-		if (!model.getModuleName().isEmpty()) {
-			module.setAttribute(ATTR_RENAME_TO, model.getModuleName());
+		if (!model.getModuleName().getValue().isEmpty()) {
+			module.setAttribute(ATTR_RENAME_TO, model.getModuleName().getValue());
 		}
 
-		if (!model.getEntryPoint().isEmpty()) {
+		if (model.getEntryPoint().hasComment()) {
+			Comment comment = doc.createComment(model.getEntryPoint().getComment());
+			module.appendChild(doc.createTextNode("\n  "));
+			module.appendChild(comment);
+		}
+
+		if (!model.getEntryPoint().getValue().isEmpty()) {
 			Element ep = doc.createElement(EL_ENTRY_POINT);
-			ep.setAttribute(ATTR_ENTRY_POINT_CLASS, model.getEntryPoint());
+			ep.setAttribute(ATTR_ENTRY_POINT_CLASS, model.getEntryPoint().getValue());
+			module.appendChild(doc.createTextNode("\n  "));
 			module.appendChild(ep);
 		}
+
+		// Final newline.
+		module.appendChild(doc.createTextNode("\n"));
 
 		StringBuilder sb = new StringBuilder(1024);
 

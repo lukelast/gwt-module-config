@@ -1,4 +1,5 @@
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:m="urn:import:gwt.material.design.client.ui" xmlns:ghu="urn:import:net.ghue.gwt.modconfig">
 	<ui:style>
 	html * {
 		font-family: RobotoDraft, Roboto, sans-serif;
@@ -7,6 +8,7 @@
 	.left {
 		width: 50%;
 		float: left;
+		padding: 20px;
 	}
 	
 	.right {
@@ -25,22 +27,25 @@
 	</ui:style>
 	<g:HTMLPanel>
 		<div class="{style.left}">
-			<g:TextBox ui:field="moduleName" />
+			<m:MaterialButton ui:field="github" waves="light">GitHub</m:MaterialButton>
 
-			<div>Entry Point</div>
-			<g:TextBox ui:field="entryPoint" />
-			
-			
-			<h1>Hello World</h1>
-			<h1>Hello World</h1>
-			<h1>Hello World</h1>
-			<h1>Hello World</h1>
-			<h1>Hello World</h1>
-			<h1>Hello World</h1>
-			<h1>Hello World</h1>
-			<h1>Hello World</h1>
-			<h1>Hello World</h1>
-			<h1>Hello World</h1>
+			<m:MaterialTitle title="Basic" description="Basic values that define your GWT Module." />
+
+			<ghu:Panel ui:field="moduleName" title="Module Name"
+				description="If left blank, by default the module name is the file
+					name, not counting the .gwt.xml part.">
+				<ghu:content>
+					<m:MaterialTextBox ui:field="moduleNameValue" placeholder="Module Name" />
+				</ghu:content>
+			</ghu:Panel>
+
+			<ghu:StringPanel ui:field="entryPoint" title="Entry Point" placeholder="Application Entry Point"
+				description="This is like your 'main' method. It must be a class that
+						implements 'EntryPoint'." />
+
+			<m:MaterialTitle title="Inherited Modules" description="Depedencies." />
+
+
 		</div>
 		<div class="{style.right}">
 			<g:TextArea styleName="{style.xml}" ui:field="xml"></g:TextArea>

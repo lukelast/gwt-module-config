@@ -1,0 +1,22 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:m="urn:import:gwt.material.design.client.ui">
+	<ui:style>
+	.title h4 div {
+		margin-top: 0;
+	}
+	</ui:style>
+	<m:MaterialRow shadow="1">
+	
+		<m:MaterialColumn grid="s12">
+			<m:MaterialTitle ui:field="title" addStyleNames="{style.title}" fontSize=".75" />
+		</m:MaterialColumn>
+		
+		<m:MaterialColumn ui:field="contentColumn" grid="s12">
+		</m:MaterialColumn>
+		
+		<m:MaterialColumn grid="s12">
+			<m:MaterialTextBox ui:field="comment" placeholder="Comment" />
+		</m:MaterialColumn>
+		
+	</m:MaterialRow>
+</ui:UiBinder>
