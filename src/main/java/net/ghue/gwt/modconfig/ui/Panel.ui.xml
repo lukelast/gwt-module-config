@@ -4,19 +4,47 @@
 	.title h4 div {
 		margin-top: 0;
 	}
-	</ui:style>
-	<m:MaterialRow shadow="1">
 	
+	.title h4 {
+		margin-top: 0.25em;
+		margin-bottom: 0.25em;
+	}
+	
+	.root {
+		position: relative;
+	}
+	
+	.link {
+		position: absolute;
+		top: 10px;
+		right: 15px;
+	}
+	
+	.link a {
+		opacity: 0.5;
+		transition-property: opacity;
+		transition-duration: 400ms;
+	}
+	
+	.link a:hover {
+		opacity: 1.0;
+	}
+	</ui:style>
+	<m:MaterialRow addStyleNames="{style.root}" shadow="1">
+
+		<m:MaterialLink ui:field="link" addStyleNames="{style.link}" visible="false"
+			target="_blank" icon="mdi-communication-live-help" textColor="light-green" fontSize="1.5" />
+
 		<m:MaterialColumn grid="s12">
 			<m:MaterialTitle ui:field="title" addStyleNames="{style.title}" fontSize=".75" />
 		</m:MaterialColumn>
-		
+
 		<m:MaterialColumn ui:field="contentColumn" grid="s12">
 		</m:MaterialColumn>
-		
+
 		<m:MaterialColumn grid="s12">
 			<m:MaterialTextBox ui:field="comment" placeholder="Comment" />
 		</m:MaterialColumn>
-		
+
 	</m:MaterialRow>
 </ui:UiBinder>

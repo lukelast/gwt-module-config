@@ -1,0 +1,111 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:m="urn:import:gwt.material.design.client.ui" xmlns:ghu="urn:import:net.ghue.gwt.modconfig.ui">
+	<ui:style>
+	html * {
+		font-family: RobotoDraft, Roboto, sans-serif;
+	}
+	
+	.left {
+		width: 60%;
+		float: left;
+		padding: 20px;
+	}
+	
+	.right {
+		width: 40%;
+		position: fixed;
+		top: 0px;
+		right: 0px;
+		bottom: 0px;
+	}
+	
+	.xml {
+		font-size: 10px;
+		width: 100%;
+		height: 100%;
+	}
+	</ui:style>
+	<g:HTMLPanel>
+		<div class="{style.left}">
+			<m:MaterialButton ui:field="github" waves="light">GitHub</m:MaterialButton>
+
+			<m:MaterialTitle addStyleNames="blue-text text-darken-3" title="Basic"
+				description="Basic values that define your GWT Module." />
+
+			<ghu:StringPanel ui:field="moduleName" title="Module Name" placeholder="Module Name"
+				link="http://www.gwtproject.org/doc/latest/DevGuideOrganizingProjects.html#DevGuideModuleXml"
+				description="If left blank, by default the module name is the file
+					name, not counting the .gwt.xml part." />
+
+			<ghu:StringPanel ui:field="entryPoint" title="Entry Point" placeholder="Entry Point Class"
+				link="http://www.gwtproject.org/javadoc/latest/com/google/gwt/core/client/EntryPoint.html"
+				description="This is where the application starts executing code, like a 'main' method.
+				It must be the name of a class, including package, that implements 'EntryPoint'.
+				For example 'com.example.client.MyEntryPoint'." />
+
+			<m:MaterialTitle addStyleNames="blue-text text-darken-3" title="Inherited Modules"
+				description="Depedencies." />
+
+			<ghu:Panel ui:field="coreModules" title="Core Module Dependencies" description="">
+			</ghu:Panel>
+
+			<m:MaterialTitle addStyleNames="blue-text text-darken-3" title="Resources (CSS/GSS)"
+				description="Configure how GWT manages resources like CSS, GSS, and UiBinder." />
+
+			<!-- http://stackoverflow.com/questions/11772627/gwt-cssresource-style-possible-values-how-to-turn-obfuscation-on -->
+			<ghu:Panel ui:field="cssResourceStyle" title="CSS Style Name Obfuscation"
+				link="https://github.com/gwtproject/gwt/blob/master/user/src/com/google/gwt/resources/rg/CssObfuscationStyle.java"
+				description="Define the format used to generate CSS class names used in CssResource and UiBinder.
+				Stable means that the CSS class name will not change between compiles.
+				Unique means there will never be name collisions.">
+				<ghu:content>
+					<m:MaterialListBox ui:field="cssResourceStyleValue">
+						<item value='obfuscated'>Obfuscated (default, smallest)</item>
+						<item value='pretty'>Pretty (unique, show class, show package)</item>
+						<item value='debug'>Debug (unique, show class)</item>
+						<item value='stable'>Stable long (stable, show class, show package)</item>
+						<item value='stable-shorttype'>Stable medium (stable, show class)</item>
+						<item value='stable-notype'>Stable short</item>
+					</m:MaterialListBox>
+				</ghu:content>
+			</ghu:Panel>
+
+			<m:MaterialTitle addStyleNames="blue-text text-darken-3" title="Compiler Options"
+				description="Control the GWT compiler." />
+
+
+			<ghu:Panel ui:field="userAgent" title="User Agent"
+				link="https://github.com/gwtproject/gwt/blob/master/user/src/com/google/gwt/useragent/UserAgent.gwt.xml"
+				description="Determines which browser permutations will be compiled.
+				When none are checked then the default option to create all permutations is used.">
+				<ghu:content>
+					<m:MaterialCheckBox ui:field="userAgentIe8" text="IE 8" />
+				</ghu:content>
+				<ghu:content>
+					<m:MaterialCheckBox ui:field="userAgentIe9" text="IE 9" />
+				</ghu:content>
+				<ghu:content>
+					<m:MaterialCheckBox ui:field="userAgentIe10" text="IE 10" />
+				</ghu:content>
+				<ghu:content>
+					<m:MaterialCheckBox ui:field="userAgentGecko1_8" text="FireFox" />
+				</ghu:content>
+				<ghu:content>
+					<m:MaterialCheckBox ui:field="userAgentSafari" text="Chrome/Safari" />
+				</ghu:content>
+			</ghu:Panel>
+
+			<ghu:BooleanPanel ui:field="collapseProperties" title="Collapse All Properties"
+				link="https://code.google.com/p/google-web-toolkit/wiki/SoftPermutations"
+				description="Enabling this option will combine all permutations in to a single output file.
+				This can greatly reduce compile time and is useful during development."
+				name="Collapse" />
+
+			<ghu:StackTrace ui:field="stackTrace" />
+
+		</div>
+		<div class="{style.right}">
+			<g:TextArea styleName="{style.xml}" ui:field="xml"></g:TextArea>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder>

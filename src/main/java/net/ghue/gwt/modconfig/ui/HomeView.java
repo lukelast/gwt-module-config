@@ -1,4 +1,4 @@
-package net.ghue.gwt.modconfig;
+package net.ghue.gwt.modconfig.ui;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.ImplementedBy;

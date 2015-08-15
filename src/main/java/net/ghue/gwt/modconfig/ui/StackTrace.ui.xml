@@ -1,0 +1,35 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:m="urn:import:gwt.material.design.client.ui" xmlns:ghu="urn:import:net.ghue.gwt.modconfig.ui">
+	<ui:style>
+	.root {
+		
+	}
+	
+	.radio {
+		display: block;
+		margin-bottom: 10px;
+	}
+	</ui:style>
+	<ghu:Panel addStyleNames="{style.root}" title="Stack Trace"
+		link="https://gwt.googlesource.com/gwt/+/master/user/src/com/google/gwt/core/StackTrace.gwt.xml"
+		description="The stack mode used by the GWT compiler.">
+		<ghu:content>
+			<m:MaterialRadioButton ui:field="stackModeNative" addStyleNames="{style.radio}"
+				name="strackTrace" text="Native (default)" />
+		</ghu:content>
+		<ghu:content>
+			<m:MaterialRadioButton ui:field="stackModeEmulated" addStyleNames="{style.radio}"
+				name="strackTrace" text="Emulated (good for debugging)" />
+		</ghu:content>
+		<ghu:content>
+			<m:MaterialRadioButton ui:field="stackModeStrip" addStyleNames="{style.radio}"
+				name="strackTrace" text="Strip (smallest file size)" />
+		</ghu:content>
+		<ghu:content>
+			<m:MaterialCheckBox ui:field="stackModeLines" text="Record Line Numbers" />
+		</ghu:content>
+		<ghu:content>
+			<m:MaterialCheckBox ui:field="stackModeNames" text="Record Line Numbers and File Names" />
+		</ghu:content>
+	</ghu:Panel>
+</ui:UiBinder>
