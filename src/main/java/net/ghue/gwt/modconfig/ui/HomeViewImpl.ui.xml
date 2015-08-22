@@ -98,10 +98,26 @@
 			<ghu:BooleanPanel ui:field="collapseProperties" title="Collapse All Properties"
 				link="https://code.google.com/p/google-web-toolkit/wiki/SoftPermutations"
 				description="Enabling this option will combine all permutations in to a single output file.
-				This can greatly reduce compile time and is useful during development."
+					This can greatly reduce compile time and is useful during development."
 				name="Collapse" />
 
 			<ghu:StackTrace ui:field="stackTrace" />
+
+			<m:MaterialTitle addStyleNames="blue-text text-darken-3" title="GWT RPC"
+				description="Remote Procedure Call" />
+
+			<ghu:BooleanPanel ui:field="serializeFinalFields" title="Serialize Final Fields"
+				link="https://github.com/gwtproject/gwt/blob/master/user/src/com/google/gwt/user/RemoteService.gwt.xml"
+				description="Allow objects that are serialized and sent over GWT RPC to have final fields.
+					If this option is not enabled all final fields will become transient."
+				name="Enable Final Fields" />
+
+			<ghu:BooleanPanel ui:field="suppressNonStaticFinalFieldWarnings" title="Suppress Non Static Final Field Warnings"
+				link="https://github.com/gwtproject/gwt/blob/master/user/src/com/google/gwt/user/RemoteService.gwt.xml"
+				description="If you don't enable support for final fields and you use final fields
+					the GWT compiler will generate warnings.
+					This option will hide those warnings."
+				name="Ignore Warnings" />
 
 		</div>
 		<div class="{style.right}">

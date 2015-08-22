@@ -6,50 +6,54 @@ import net.ghue.gwt.modconfig.xml.XmlConverter;
 
 public final class GwtModuleDataModel {
 
-	private final CommentedValue<Boolean> collapseAllProperties = CommentedValue.create(false);
-	private final CommentedValue<EnumSet<CoreModule>> coreModules = CommentedValue
-			.create(EnumSet.noneOf(CoreModule.class));
-	private final CommentedValue<String> CssResourceStyle = CommentedValue.create("obfuscated");
-	private final CommentedValue<String> entryPoint = CommentedValue.create("");
-	private final CommentedValue<String> moduleName = CommentedValue.create("");
+	private final Setting<Boolean> collapseAllProperties = Setting.create(false);
+	private final Setting<EnumSet<CoreModule>> coreModules = Setting.create(EnumSet.noneOf(CoreModule.class));
+	private final Setting<String> CssResourceStyle = Setting.create("obfuscated");
+	private final Setting<String> entryPoint = Setting.create("");
+	private final Setting<String> moduleName = Setting.create("");
+	private final Setting<Boolean> rpcSerializeFinalFields = Setting.create(false);
+	private final Setting<Boolean> rpcSuppressFinalFieldWarnings = Setting.create(false);
 	private EmulatedStackRecordOption stackEmulationOption = EmulatedStackRecordOption.NONE;
-	private final CommentedValue<StackMode> stackMode = CommentedValue.create(StackMode.NATIVE);
-	private String userAgentComment = "";
-	private final EnumSet<UserAgent> userAgents = EnumSet.noneOf(UserAgent.class);
+	private final SettingEnum<StackMode> stackMode = new SettingEnum<>(StackMode.NATIVE);
+	private final SettingUserAgents userAgents = new SettingUserAgents();
 
-	public CommentedValue<Boolean> getCollapseAllProperties() {
+	public Setting<Boolean> getCollapseAllProperties() {
 		return collapseAllProperties;
 	}
 
-	public CommentedValue<EnumSet<CoreModule>> getCoreModules() {
+	public Setting<EnumSet<CoreModule>> getCoreModules() {
 		return coreModules;
 	}
 
-	public CommentedValue<String> getCssResourceStyle() {
+	public Setting<String> getCssResourceStyle() {
 		return CssResourceStyle;
 	}
 
-	public CommentedValue<String> getEntryPoint() {
+	public Setting<String> getEntryPoint() {
 		return entryPoint;
 	}
 
-	public CommentedValue<String> getModuleName() {
+	public Setting<String> getModuleName() {
 		return moduleName;
+	}
+
+	public Setting<Boolean> getRpcSerializeFinalFields() {
+		return rpcSerializeFinalFields;
+	}
+
+	public Setting<Boolean> getRpcSuppressFinalFieldWarnings() {
+		return rpcSuppressFinalFieldWarnings;
 	}
 
 	public EmulatedStackRecordOption getStackEmulationOption() {
 		return stackEmulationOption;
 	}
 
-	public CommentedValue<StackMode> getStackMode() {
+	public Setting<StackMode> getStackMode() {
 		return stackMode;
 	}
 
-	public String getUserAgentComment() {
-		return userAgentComment;
-	}
-
-	public EnumSet<UserAgent> getUserAgents() {
+	public Setting<EnumSet<UserAgent>> getUserAgents() {
 		return userAgents;
 	}
 
@@ -60,10 +64,6 @@ public final class GwtModuleDataModel {
 
 	public void setStackEmulationOption(EmulatedStackRecordOption stackEmulationOption) {
 		this.stackEmulationOption = stackEmulationOption;
-	}
-
-	public void setUserAgentComment(String userAgentComment) {
-		this.userAgentComment = userAgentComment.trim();
 	}
 
 	public String toXml() {

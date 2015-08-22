@@ -50,17 +50,17 @@ public class Panel extends Composite implements TakesComment {
 		this.contentColumn.clear();
 	}
 
+	@Override
+	public String getComment() {
+		return comment.getText();
+	}
+
 	public List<Widget> getContents() {
 		List<Widget> widgets = new ArrayList<>();
 		for (int i = 0; i < contentColumn.getWidgetCount(); i++) {
 			widgets.add(contentColumn.getWidget(i));
 		}
 		return widgets;
-	}
-
-	@Override
-	public String getComment() {
-		return comment.getText();
 	}
 
 	@Override

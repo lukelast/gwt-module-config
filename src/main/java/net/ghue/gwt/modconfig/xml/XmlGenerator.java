@@ -2,103 +2,84 @@ package net.ghue.gwt.modconfig.xml;
 
 import static net.ghue.gwt.modconfig.xml.Constants.*;
 
-import com.google.gwt.xml.client.Document;
-import com.google.gwt.xml.client.Element;
-import com.google.gwt.xml.client.Node;
-import com.google.gwt.xml.client.XMLParser;
-
-import net.ghue.gwt.modconfig.data.CommentedValue;
 import net.ghue.gwt.modconfig.data.CoreModule;
 import net.ghue.gwt.modconfig.data.GwtModuleDataModel;
-import net.ghue.gwt.modconfig.data.UserAgent;
+import net.ghue.gwt.modconfig.data.PrintableSetting;
 
 final class XmlGenerator {
 
 	private final GwtModuleDataModel data;
-	private Document doc = XMLParser.createDocument();
-	private int indentLevel = 0;
-	private Element module;
+	private final DocBuilder doc = new DocBuilder();
 
 	public XmlGenerator(GwtModuleDataModel model) {
 		this.data = model;
 	}
 
-	private XmlGenerator appendComment(CommentedValue<?> value) {
-		if (value.hasComment()) {
-			appendComment(value.getComment());
-		}
-		return this;
-	}
-
-	private XmlGenerator appendComment(String comment) {
-		if (comment != null && !comment.isEmpty()) {
-			appendNextLine(doc.createComment(comment));
-		}
-		return this;
-	}
-
-	private void appendConfigurationProperty(String name, CommentedValue<String> value) {
-		if (!value.isDefaultValue()) {
-			appendComment(data.getCssResourceStyle());
-			Element element = doc.createElement(EL_SET_CONFIG_PROPERTY);
-			element.setAttribute(ATTR_NAME, name);
-			element.setAttribute(ATTR_VALUE, data.getCssResourceStyle().getValue());
-			appendNextLine(element);
+	private void appendConfigurationProperty(String name, PrintableSetting value) {
+		if (value.shouldPrint()) {
+			doc.appendComment(value);
+			doc.setConfigProperty().name(name).value(value).build();
 		}
 	}
 
-	private void appendNewlineIndent() {
-		final StringBuilder sb = new StringBuilder();
-		sb.append(NEWLINE);
-		for (int i = 0; i < indentLevel; i++) {
-			sb.append("  ");
+	private void appendInherits(String path) {
+		doc.element(EL_INHERITS).name(path).build();
+	}
+
+	private void appendProperty(String name, PrintableSetting value) {
+		if (value.shouldPrint()) {
+			doc.appendComment(value.getComment());
+			doc.setProperty().name(name).value(value).build();
 		}
-		module.appendChild(doc.createTextNode(sb.toString()));
 	}
 
-	private void deindent() {
-		indentLevel = Math.max(0, indentLevel - 1);
-	}
-
-	private void appendNextLine(Node node) {
-		appendNewlineIndent();
-		module.appendChild(node);
+	private void genCoreModules() {
+		if (!data.getCoreModules().getValue().isEmpty()) {
+			doc.appendComment(data.getCoreModules());
+			for (CoreModule module : data.getCoreModules().getValue()) {
+				appendInherits(module.getPath());
+			}
+		}
 	}
 
 	/**
 	 * Generate an XML string.
 	 */
 	public String generateString() {
-		module = doc.createElement(EL_MODULE);
 
 		// Add module name attribute to root element.
-		if (!data.getModuleName().getValue().isEmpty()) {
-			module.setAttribute(ATTR_RENAME_TO, data.getModuleName().getValue());
-		}
+		doc.setModuleAttr(ATTR_RENAME_TO, data.getModuleName().getValue());
 
-		doc.appendChild(module);
-		indent();
-
-		if (!data.getEntryPoint().getValue().isEmpty()) {
-			appendComment(data.getEntryPoint());
-			Element ep = doc.createElement(EL_ENTRY_POINT);
-			ep.setAttribute(ATTR_ENTRY_POINT_CLASS, data.getEntryPoint().getValue());
-			appendNextLine(ep);
+		if (data.getEntryPoint().shouldPrint()) {
+			doc.appendComment(data.getEntryPoint());
+			doc.element(EL_ENTRY_POINT).attr(ATTR_ENTRY_POINT_CLASS, data.getEntryPoint().getValueAsString()).build();
 		}
 
 		genCoreModules();
 
-		genUserAgent();
+		appendProperty(ATTR_NAME_USER_AGENT, data.getUserAgents());
 
 		if (data.getCollapseAllProperties().getValue()) {
-			appendComment(data.getCollapseAllProperties());
-			appendNextLine(doc.createElement(EL_COLLAPSE_ALL_PROPERTIES));
+			doc.appendComment(data.getCollapseAllProperties());
+			doc.appendElement(EL_COLLAPSE_ALL_PROPERTIES);
+		}
+
+		appendProperty(ATTR_COMPILER_STACKMODE, data.getStackMode());
+		switch (data.getStackEmulationOption()) {
+		case LINE_NUMBERS:
+			doc.setConfigProperty().name(ATTR_RECORD_LINE_NUMBERS).value(Boolean.TRUE.toString()).build();
+			break;
+		case FILE_NAMES:
+			doc.setConfigProperty().name(ATTR_RECORD_FILE_NAMES).value(Boolean.TRUE.toString()).build();
+			break;
+		case NONE:
+			break;
 		}
 
 		appendConfigurationProperty(ATTR_CSS_RESOURCE_STYLE, data.getCssResourceStyle());
 
-		deindent();
-		appendNewlineIndent(); // Final newline.
+		appendProperty(ATTR_SERIALIZE_FINAL_FIELDS, data.getRpcSerializeFinalFields());
+		appendProperty(ATTR_SUPPRESS_FINAL_FIELD_WARNINGS, data.getRpcSuppressFinalFieldWarnings());
 
 		StringBuilder header = new StringBuilder(1024);
 
@@ -114,44 +95,6 @@ final class XmlGenerator {
 
 		header.append(doc.toString());
 		return header.toString();
-	}
-
-	private void genCoreModules() {
-		if (!data.getCoreModules().getValue().isEmpty()) {
-			appendComment(data.getCoreModules());
-			for (CoreModule module : data.getCoreModules().getValue()) {
-				appendInherits(module.getPath());
-			}
-		}
-	}
-
-	private void appendInherits(String path) {
-		Element element = doc.createElement(EL_INHERITS);
-		element.setAttribute(ATTR_NAME, path);
-		appendNextLine(element);
-	}
-
-	private void genUserAgent() {
-		if (!data.getUserAgents().isEmpty()) {
-			appendComment(data.getUserAgentComment());
-
-			Element element = doc.createElement(EL_SET_PROPERTY);
-			element.setAttribute(ATTR_NAME, ATTR_NAME_USER_AGENT);
-			final StringBuilder sb = new StringBuilder();
-			for (UserAgent ua : data.getUserAgents()) {
-				sb.append(ua.getValue());
-				sb.append(',');
-			}
-			// Remove the last comma.
-			sb.deleteCharAt(sb.length() - 1);
-			element.setAttribute(ATTR_VALUE, sb.toString());
-
-			appendNextLine(element);
-		}
-	}
-
-	private void indent() {
-		indentLevel++;
 	}
 
 }

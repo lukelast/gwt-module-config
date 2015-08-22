@@ -2,20 +2,21 @@ package net.ghue.gwt.modconfig.data;
 
 import com.google.gwt.user.client.TakesValue;
 
-public final class CommentedValue<T> implements TakesValue<T>, TakesComment {
+public class Setting<T> implements TakesValue<T>, TakesComment, PrintableSetting, WritableSetting {
 
-	public static <T> CommentedValue<T> create(T defaultValue) {
-		return new CommentedValue<T>(defaultValue);
-	}
-
-	public CommentedValue(T defaultValue) {
-		this.defaultValue = defaultValue;
-		this.setValue(this.defaultValue);
+	public static <T> Setting<T> create(T defaultValue) {
+		return new Setting<T>(defaultValue);
 	}
 
 	private String comment = "";
-	private T value;
+
 	private final T defaultValue;
+	private T value;
+
+	Setting(T defaultValue) {
+		this.defaultValue = defaultValue;
+		this.setValue(this.defaultValue);
+	}
 
 	public <S extends TakesValue<T> & TakesComment> void from(S obj) {
 		this.setComment(obj.getComment());
@@ -32,8 +33,28 @@ public final class CommentedValue<T> implements TakesValue<T>, TakesComment {
 		return value;
 	}
 
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
+
 	public boolean hasComment() {
 		return !getComment().isEmpty();
+	}
+
+	public boolean isDefaultValue() {
+		return this.defaultValue.equals(this.getValue());
+	}
+
+	@SuppressWarnings("unchecked")
+	public void parseValue(String text) {
+		if (text != null) {
+			if (this.value instanceof String) {
+				this.value = (T) text;
+			} else if (this.value instanceof Boolean) {
+				this.value = (T) Boolean.valueOf(text);
+			}
+		}
 	}
 
 	@Override
@@ -48,8 +69,9 @@ public final class CommentedValue<T> implements TakesValue<T>, TakesComment {
 		}
 	}
 
-	public boolean isDefaultValue() {
-		return this.defaultValue.equals(this.getValue());
+	@Override
+	public boolean shouldPrint() {
+		return hasComment() || !isDefaultValue();
 	}
 
 	public <S extends TakesValue<T> & TakesComment> void to(S obj) {
@@ -57,12 +79,12 @@ public final class CommentedValue<T> implements TakesValue<T>, TakesComment {
 		obj.setValue(this.getValue());
 	}
 
-	public CommentedValue<T> withComment(String comment) {
+	public Setting<T> withComment(String comment) {
 		setComment(comment);
 		return this;
 	}
 
-	public CommentedValue<T> withValue(T value) {
+	public Setting<T> withValue(T value) {
 		setValue(value);
 		return this;
 	}

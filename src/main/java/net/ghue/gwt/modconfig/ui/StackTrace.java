@@ -10,31 +10,52 @@ import com.google.gwt.user.client.ui.Widget;
 
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialRadioButton;
+import net.ghue.gwt.modconfig.data.EmulatedStackRecordOption;
+import net.ghue.gwt.modconfig.data.GwtModuleDataModel;
+import net.ghue.gwt.modconfig.data.StackMode;
 
 public class StackTrace implements IsWidget {
 
-	public interface Binder extends UiBinder<Widget, StackTrace> {
+	public interface Binder extends UiBinder<Panel, StackTrace> {
 	}
 
 	private static final Binder BINDER = GWT.create(Binder.class);
 
-	@UiField
-	MaterialRadioButton stackModeNative;
+	private final Panel root = BINDER.createAndBindUi(this);
 	@UiField
 	MaterialRadioButton stackModeEmulated;
-	@UiField
-	MaterialRadioButton stackModeStrip;
-
 	@UiField
 	MaterialCheckBox stackModeLines;
 	@UiField
 	MaterialCheckBox stackModeNames;
+	@UiField
+	MaterialRadioButton stackModeNative;
 
-	private final Widget root = BINDER.createAndBindUi(this);
+	@UiField
+	MaterialRadioButton stackModeStrip;
 
 	@Override
 	public Widget asWidget() {
 		return root;
+	}
+
+	public void from(GwtModuleDataModel data) {
+		stackModeNative.setValue(false);
+		stackModeEmulated.setValue(false);
+		stackModeStrip.setValue(false);
+
+		switch (data.getStackMode().getValue()) {
+		case NATIVE:
+			stackModeNative.setValue(true);
+			break;
+		case EMULATED:
+			stackModeEmulated.setValue(true);
+			break;
+		case STRIP:
+			stackModeStrip.setValue(true);
+			break;
+		}
+		root.setComment(data.getStackMode().getComment());
 	}
 
 	@UiHandler("stackModeNames")
@@ -43,5 +64,23 @@ public class StackTrace implements IsWidget {
 
 		stackModeLines.setValue(true);
 		stackModeLines.setEnabled(!namesChecked);
+	}
+
+	public void to(GwtModuleDataModel data) {
+		data.getStackMode().setComment(root.getComment());
+		if (stackModeNative.getValue()) {
+			data.getStackMode().setValue(StackMode.NATIVE);
+		} else if (stackModeEmulated.getValue()) {
+			data.getStackMode().setValue(StackMode.EMULATED);
+		} else if (stackModeStrip.getValue()) {
+			data.getStackMode().setValue(StackMode.STRIP);
+		}
+		if (stackModeNames.getValue()) {
+			data.setStackEmulationOption(EmulatedStackRecordOption.FILE_NAMES);
+		} else if (stackModeLines.getValue()) {
+			data.setStackEmulationOption(EmulatedStackRecordOption.LINE_NUMBERS);
+		} else {
+			data.setStackEmulationOption(EmulatedStackRecordOption.NONE);
+		}
 	}
 }

@@ -44,6 +44,15 @@ public class HomeViewImpl implements HomeView {
 	BooleanPanel collapseProperties;
 
 	@UiField
+	Panel coreModules;
+
+	@UiField
+	Panel cssResourceStyle;
+
+	@UiField
+	MaterialListBox cssResourceStyleValue;
+
+	@UiField
 	StringPanel entryPoint;
 
 	private final Timer exportTimer = new Timer() {
@@ -54,26 +63,29 @@ public class HomeViewImpl implements HomeView {
 	};
 
 	@UiField
-	Panel cssResourceStyle;
-
-	@UiField
-	MaterialListBox cssResourceStyleValue;
-
-	@UiField
 	StringPanel moduleName;
 
 	@SuppressWarnings("unused")
 	private Presenter presenter;
-
 	private final Widget root = BINDER.createAndBindUi(this);
 	@UiField
+	BooleanPanel serializeFinalFields;
+	@UiField
+	StackTrace stackTrace;
+	@UiField
+	BooleanPanel suppressNonStaticFinalFieldWarnings;
+	@UiField
 	Panel userAgent;
+
 	@UiField
 	MaterialCheckBox userAgentGecko1_8;
+
 	@UiField
 	MaterialCheckBox userAgentIe10;
+
 	@UiField
 	MaterialCheckBox userAgentIe8;
+
 	@UiField
 	MaterialCheckBox userAgentIe9;
 
@@ -83,15 +95,19 @@ public class HomeViewImpl implements HomeView {
 	@UiField
 	TextArea xml;
 
-	@UiField
-	StackTrace stackTrace;
-
-	@UiField
-	Panel coreModules;
-
 	@Override
 	public Widget asWidget() {
 		return root;
+	}
+
+	private void createCoreModules(EnumSet<CoreModule> enabledModules) {
+		coreModules.clearContents();
+		for (CoreModule coreModule : CoreModule.values()) {
+			MaterialCheckBox check = new MaterialCheckBox();
+			check.setText(coreModule.getDisplayText());
+			check.setValue(enabledModules.contains(coreModule));
+			coreModules.addContent(check);
+		}
 	}
 
 	private void importXml(String xml) {
@@ -135,14 +151,17 @@ public class HomeViewImpl implements HomeView {
 		data.getModuleName().to(moduleName);
 		data.getEntryPoint().to(entryPoint);
 		data.getCollapseAllProperties().to(collapseProperties);
+		stackTrace.from(data);
+		data.getRpcSerializeFinalFields().to(serializeFinalFields);
+		data.getRpcSuppressFinalFieldWarnings().to(suppressNonStaticFinalFieldWarnings);
 
-		userAgent.setComment(data.getUserAgentComment());
+		userAgent.setComment(data.getUserAgents().getComment());
 		userAgentIe8.setValue(false);
 		userAgentIe9.setValue(false);
 		userAgentIe10.setValue(false);
 		userAgentGecko1_8.setValue(false);
 		userAgentSafari.setValue(false);
-		for (UserAgent ua : data.getUserAgents()) {
+		for (UserAgent ua : data.getUserAgents().getValue()) {
 			switch (ua) {
 			case IE8:
 				userAgentIe8.setValue(true);
@@ -168,23 +187,14 @@ public class HomeViewImpl implements HomeView {
 			}
 		}
 		// This hack is required to force the changed value selection to show.
-		String value = cssResourceStyleValue.getValue(0);
-		String text = cssResourceStyleValue.getItemText(0);
-		cssResourceStyleValue.removeItem(0);
-		cssResourceStyleValue.insertItem(text, value, 0);
+		String value = cssResourceStyleValue.getValue(5);
+		String text = cssResourceStyleValue.getItemText(5);
+		cssResourceStyleValue.removeItem(5);
+		cssResourceStyleValue.insertItem(text, value, 5);
 		cssResourceStyle.setComment(data.getCssResourceStyle().getComment());
 
 		createCoreModules(data.getCoreModules().getValue());
-	}
-
-	private void createCoreModules(EnumSet<CoreModule> enabledModules) {
-		coreModules.clearContents();
-		for (CoreModule coreModule : CoreModule.values()) {
-			MaterialCheckBox check = new MaterialCheckBox();
-			check.setText(coreModule.getName());
-			check.setValue(enabledModules.contains(coreModule));
-			coreModules.addContent(check);
-		}
+		coreModules.setComment(data.getCoreModules().getComment());
 	}
 
 	private void pushUItoXml() {
@@ -192,22 +202,26 @@ public class HomeViewImpl implements HomeView {
 		data.getModuleName().from(moduleName);
 		data.getEntryPoint().from(entryPoint);
 		data.getCollapseAllProperties().from(collapseProperties);
+		stackTrace.to(data);
+		data.getRpcSerializeFinalFields().from(serializeFinalFields);
+		data.getRpcSuppressFinalFieldWarnings().from(suppressNonStaticFinalFieldWarnings);
 
-		data.setUserAgentComment(userAgent.getComment());
+		data.getUserAgents().setComment(userAgent.getComment());
+		EnumSet<UserAgent> agents = data.getUserAgents().getValue();
 		if (userAgentIe8.getValue()) {
-			data.getUserAgents().add(UserAgent.IE8);
+			agents.add(UserAgent.IE8);
 		}
 		if (userAgentIe9.getValue()) {
-			data.getUserAgents().add(UserAgent.IE9);
+			agents.add(UserAgent.IE9);
 		}
 		if (userAgentIe10.getValue()) {
-			data.getUserAgents().add(UserAgent.IE10);
+			agents.add(UserAgent.IE10);
 		}
 		if (userAgentGecko1_8.getValue()) {
-			data.getUserAgents().add(UserAgent.GECKO);
+			agents.add(UserAgent.GECKO);
 		}
 		if (userAgentSafari.getValue()) {
-			data.getUserAgents().add(UserAgent.SAFARI);
+			agents.add(UserAgent.SAFARI);
 		}
 
 		data.getCssResourceStyle().setComment(cssResourceStyle.getComment());
@@ -219,7 +233,7 @@ public class HomeViewImpl implements HomeView {
 			if (widget instanceof MaterialCheckBox) {
 				MaterialCheckBox check = (MaterialCheckBox) widget;
 				if (check.getValue()) {
-					data.getCoreModules().getValue().add(CoreModule.fromName(check.getText()));
+					data.getCoreModules().getValue().add(CoreModule.fromDisplayText(check.getText()));
 				}
 			}
 		}
