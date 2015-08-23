@@ -40,10 +40,7 @@ public class StackTrace implements IsWidget {
 	}
 
 	public void from(GwtModuleDataModel data) {
-		stackModeNative.setValue(false);
-		stackModeEmulated.setValue(false);
-		stackModeStrip.setValue(false);
-
+		root.setComment(data.getStackMode().getComment());
 		switch (data.getStackMode().getValue()) {
 		case NATIVE:
 			stackModeNative.setValue(true);
@@ -55,7 +52,26 @@ public class StackTrace implements IsWidget {
 			stackModeStrip.setValue(true);
 			break;
 		}
-		root.setComment(data.getStackMode().getComment());
+
+		switch (data.getStackEmulationOption()) {
+		case FILE_NAMES:
+			stackModeNames.setValue(true);
+			stackModeLines.setValue(true);
+			stackModeLines.setEnabled(false);
+			break;
+		case LINE_NUMBERS:
+			stackModeLines.setValue(true);
+			stackModeLines.setEnabled(true);
+			stackModeNames.setValue(false);
+			break;
+		case NONE:
+			stackModeLines.setValue(false);
+			stackModeLines.setEnabled(true);
+			stackModeNames.setValue(false);
+			break;
+
+		}
+
 	}
 
 	@UiHandler("stackModeNames")
